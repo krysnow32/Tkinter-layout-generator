@@ -5,6 +5,7 @@ from SimpleIter import SimpleIter
 from tkinter import messagebox
 import json
 from enum import Enum
+from tkinter import filedialog
 from pathlib import Path
 
 
@@ -176,18 +177,14 @@ class App(tk.Tk):
         self.menuFile = tk.Menu(master = self.menuBar)
         self.menuFile.add_command(label = 'Open layout from JSON file', command = self.loadLayoutFromFile)
         self.menuFile.add_command(label = 'Save To JSON file', command = self.saveLayoutToFile)
-        self.menuHelp = tk.Menu(master = self.menuBar)
-        self.menuHelp.add_command(label = 'Show program info', command=self.showProgramInfo)
-        self.menuHelp.add_command(label = 'Read Short Tutorial', command = self.showTutorial)
         self.menuGenerate = tk.Menu(master = self.menuBar)
         self.menuGenerate.add_command(label = 'Generate Python File', command = self.generatePythonFile)
         self.menuConfig = tk.Menu(master = self.menuBar)
         self.menuConfig.add_command(label = 'Config Frame Size', command = self.windowDimensions.deiconify)
-        self.menuConfig.add_command(label = 'Config Generating File', command = self.configureGenerating)
-        self.menuConfig.add_command(label = 'Config saving to JSON path')
+        self.menuConfig.add_command(label = 'Config Generating File', command = self.configureGeneratingPath)
+        self.menuConfig.add_command(label = 'Config JSON path', command = self.configureJSONPath)
         self.menuBar.add_cascade(menu = self.menuFile, label = 'File')
         self.menuBar.add_cascade(menu = self.menuGenerate, label = 'Generate')
-        self.menuBar.add_cascade(menu = self.menuHelp, label='Help')
         self.menuBar.add_cascade(menu = self.menuConfig, label = 'Config')
         self['menu'] = self.menuBar
         
@@ -337,9 +334,11 @@ class App(tk.Tk):
                             pythonString += f'        self.{canvas.get("name")}.place(x = {canvas.get("x")}, y = {canvas.get("y")})\n'
                     if key == 'Treeview':
                         for treeview in value:
-                            pythonString += f'        self.{treeview.get("name")} = ttk.Treeview(master = self, height = {treeview.get("height")})\n'
+                            pythonString += f'        self.{treeview.get("name")} = ttk.Treeview(master = self, height = {treeview.get("height")}, show = "headings")\n'
                             pythonString += f'        self.{treeview.get("name")}.place(x = {treeview.get("x")}, y = {treeview.get("y")})\n'
-            
+                            pythonString += f'        self.{treeview.get("name")}["columns"] = ("Treeview")\n'
+                            pythonString += f'        self.{treeview.get("name")}.heading("Treeview", text = "Treeview")\n'    
+        
             if self.checkGenerateMenu.get():
                 pythonString += '\n        self.option_add("*tearOff", False)'
                 with open('menuBar.json', 'r') as file:
@@ -360,10 +359,22 @@ class App(tk.Tk):
         
         
 
+    def configureGeneratingPath(self):
+        generatingPath = filedialog.asksaveasfilename(title = 'Select Python file', filetypes = [('Python files', '*.py')])
+        with open('config.json', 'r') as file:
+            data = json.load(file)
+            data['Generating file name'] = generatingPath
+        with open('config.json', 'w') as file:
+            json.dump(data, file, indent = 4)
 
 
-    def configureGenerating(self):
-        pass
+    def configureJSONPath(self):
+        JSONPath = filedialog.asksaveasfilename(title = 'Select JSON file', filetypes = [('JSON files', '*.json')])
+        with open('config.json', 'r') as file:
+            data = json.load(file)
+            data['JSON file name'] = JSONPath
+        with open('config.json', 'w') as file:
+            json.dump(data, file, indent = 4)
 
 
     def viewFrameOnClick(self, event):
@@ -1195,7 +1206,7 @@ class App(tk.Tk):
         dataToSave.get('Window').append(propertiesDict)
         with open(path, 'w') as file:
             print(dataToSave)
-            dataJson = json.dumps(dataToSave, indent = 0)
+            dataJson = json.dumps(dataToSave, indent = 4)
             file.write(dataJson)
         messagebox.showinfo('Saving', message = 'Layout saved successfully')
 
