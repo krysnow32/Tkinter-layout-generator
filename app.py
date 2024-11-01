@@ -500,7 +500,6 @@ class App(tk.Tk):
                 widget.bind('<B1-Motion>', func = self.onDrag)
                 widget.bind('<ButtonRelease-1>', func = self.onStopDrag)
                 
-        
 
     def widgetOnClick(self, event, widgetClickedID) -> None:
         widget = event.widget
@@ -531,14 +530,6 @@ class App(tk.Tk):
         pass
 
     
-    def testcommand(self):
-        print(self.useGrid.get())
-
-
-    def generateWidgetList(self):
-        print(self.layoutViewFrame.children)
-
-
     def changeCursor(self):
         if self.delete.get():
             self.config(cursor='pirate')
@@ -557,7 +548,6 @@ class App(tk.Tk):
                     if len(self.treeViewMenus.parent(parentID)) == 0:
                         self.treeViewMenus.insert(parent = parentID, index = 'end', text = submenuName)
                     
-
 
     def checkMenuExists(self, menuName: str, parentID: str = None) -> bool:
         """
@@ -821,7 +811,6 @@ class App(tk.Tk):
         self.applyPropertyToWidget(itemID = itemID, value = newValue)
         
 
-
     def applyPropertyToWidget(self, itemID: str = None, value: str = None) -> None:
         if itemID is not None and value is not None:
             try:
@@ -1059,9 +1048,7 @@ class App(tk.Tk):
                     widget.bind('<B1-Motion>', func = self.onDrag)
                     widget.bind('<ButtonRelease-1>', func = self.onStopDrag)
                     self.widgetNameDict.update({widget.winfo_id(): treeview.get('name')})
-        print(self.widgetNameDict)
             
-
 
     def saveLayoutToFile(self):
         path = ''
